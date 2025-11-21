@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeepSeek Chat</title>
+<style>
+body { font-family: Arial; background: #121212; color: #eee; text-align:center; padding: 50px; }
+input, button { padding: 10px; font-size: 16px; margin: 5px; width: 300px; }
+#chat { margin-top: 20px; max-width: 600px; margin-left:auto; margin-right:auto; text-align:left; }
+.message { margin-bottom: 10px; }
+.user { color: #4caf50; }
+.bot { color: #03a9f4; }
+</style>
+</head>
+<body>
+
+<h1>DeepSeek Chat</h1>
+<input type="text" id="prompt" placeholder="Ask me something...">
+<button onclick="sendPrompt()">Send</button>
+
+<div id="chat"></div>
+
+<script>
+async function sendPrompt() {
+    const prompt = document.getElementById("prompt").value;
+    if(!prompt) return;
+
+    const chatDiv = document.getElementById("chat");
+    chatDiv.innerHTML += `<div class="message user"><b>You:</b> ${prompt}</div>`;
+
+    const response = await fetch("http://localhost:3000/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt })
+    });
+
+    const data = await response.json();
+    const botReply = data.choices?.[0]?.text || "No response";
+    chatDiv.innerHTML += `<div class="message bot"><b>Bot:</b> ${botReply}</div>`;
+    document.getElementById("prompt").value = "";
+}
+</script>
+
+</body>
+</html>
